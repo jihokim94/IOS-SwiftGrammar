@@ -3,12 +3,17 @@
    version = "3.0">
    <TimelineItems>
       <LoggerValueHistoryTimelineItem
-         documentLocation = "file:///Users/jihokim/Desktop/IOS_SwiftGrammar/Collection/iterating.playground#CharacterRangeLen=1576&amp;CharacterRangeLoc=0&amp;EndingColumnNumber=0&amp;EndingLineNumber=99&amp;StartingColumnNumber=0&amp;StartingLineNumber=0&amp;Timestamp=647007629.214545"
+         documentLocation = "file:///Users/jihokim/Desktop/IOS_SwiftGrammar/Collection/iterating.playground#CharacterRangeLen=1576&amp;CharacterRangeLoc=0&amp;EndingColumnNumber=0&amp;EndingLineNumber=99&amp;StartingColumnNumber=0&amp;StartingLineNumber=0&amp;Timestamp=647088180.496096"
          selectedRepresentationIndex = "0"
          shouldTrackSuperviewWidth = "NO">
       </LoggerValueHistoryTimelineItem>
       <LoggerValueHistoryTimelineItem
-         documentLocation = "file:///Users/jihokim/Desktop/IOS_SwiftGrammar/Collection/iterating.playground#CharacterRangeLen=1576&amp;CharacterRangeLoc=0&amp;EndingColumnNumber=0&amp;EndingLineNumber=99&amp;StartingColumnNumber=0&amp;StartingLineNumber=0&amp;Timestamp=647007629.2147141"
+         documentLocation = "file:///Users/jihokim/Desktop/IOS_SwiftGrammar/Collection/iterating.playground#CharacterRangeLen=1576&amp;CharacterRangeLoc=0&amp;EndingColumnNumber=0&amp;EndingLineNumber=99&amp;StartingColumnNumber=0&amp;StartingLineNumber=0&amp;Timestamp=647088180.496152"
+         selectedRepresentationIndex = "0"
+         shouldTrackSuperviewWidth = "NO">
+      </LoggerValueHistoryTimelineItem>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "file:///Users/jihokim/Desktop/IOS_SwiftGrammar/Collection/iterating.playground#CharacterRangeLen=14&amp;CharacterRangeLoc=1487&amp;EndingColumnNumber=0&amp;EndingLineNumber=93&amp;StartingColumnNumber=5&amp;StartingLineNumber=92&amp;Timestamp=647088180.496188"
          selectedRepresentationIndex = "0"
          shouldTrackSuperviewWidth = "NO">
       </LoggerValueHistoryTimelineItem>
