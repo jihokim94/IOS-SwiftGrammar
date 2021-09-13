@@ -152,7 +152,7 @@ do {
     case .negativeNumber:
         print("negativeNumber")
     }
-} catch {
+}catch {
     print(error.localizedDescription)
 }
 

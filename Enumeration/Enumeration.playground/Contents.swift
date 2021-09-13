@@ -126,9 +126,11 @@ if case let .subway(2 , express) = tpt { // 이코드는 쉽게 말해서 2호�
     }
 }
 
+
 if case .subway (_ , true) = tpt {
     print("express")
 }
+
 
 let list = [
     Transprotation.subway(lineNumber: 2, express: false),
