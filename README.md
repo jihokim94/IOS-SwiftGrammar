@@ -1510,3 +1510,121 @@ print(moneyInMyPocket.won)
 ## **관련문서**
 
 - [The Swift Programming Language – Properties](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Properties.html)
+
+
+---
+
+# **상속**
+
+스위프트의 상속은 클래스, 프로토콜 등에서 가능합니다. 열거형, 구조체는 상속이 불가능합니다. 스위프트는 다중상속을 지원하지 않습니다.이번 파트에서는 클래스의 상속에 대해서 알아보자
+
+**타입 프로퍼티**는 타입 메소드와 마찬가지로 **생성자 없이 바로 접근** 가능하고, static, class 중 **class 프로퍼티만 상속**이 가능해요.
+
+static 프로퍼티의 가장 흔한 예시는 설정(configuration)입니다. `UIKit` 에서 유일한 목적이 다른 object를 설정하기 위한 것인 이러한 프로퍼티를 볼 수 있죠.
+
+주의해야할 점은 **class 타입 프로퍼티** 같은 경우, **연산 타입 프로퍼티**(Computed type property)로 표현이 되어야 해요.
+
+```swift
+
+//저장 타입 프로퍼티 형태 - 컴파일 에러
+class var errorClassProperty: Int = 1
+//연산 타입 프로퍼티 형태 - 컴파일 OK
+class var correctClassProperty: Int {
+   return 1
+}
+```
+
+## **클래스의 상속과 재정의**
+
+### **상속 문법**
+
+```
+class 이름: 상속받을 클래스 이름 {
+    /* 구현부 */
+}
+```
+
+```swift
+// 기반 클래스 Person
+class Person {
+    var name: String = ""
+    func selfIntroduce() {
+        print("저는 \(name)입니다")
+    }
+    // final 키워드를 사용하여 재정의를 방지할 수 있습니다
+    final func sayHello() {
+        print("hello")
+    }
+    // 타입 메서드
+    // 재정의 불가 타입 메서드 - static
+    static func typeMethod() {
+        print("type method - static")
+    }
+    // 재정의 가능 타입 메서드 - class
+    class func classMethod() {
+        print("type method - class")
+    }
+    // 재정의 가능한 class 메서드라도
+    // final 키워드를 사용하면 재정의 할 수 없습니다
+    // 메서드 앞의 `static`과 `final class`는 똑같은 역할을 합니다
+    final class func finalCalssMethod() {
+        print("type method - final class")
+    }
+}
+// Person을 상속받는 Student
+class Student: Person {
+    var major: String = ""
+    override func selfIntroduce() {
+        print("저는 \(name)이고, 전공은 \(major)입니다")
+    }
+    override class func classMethod() {
+        print("overriden type method - class")
+    }
+    // static을 사용한 타입 메서드는 재정의 할 수 없습니다
+//    override static func typeMethod() {    }
+    // final 키워드를 사용한 메서드, 프로퍼티는 재정의 할 수 없습니다
+//    override func sayHello() {    }
+//   override class func finalClassMethod() {    }
+}
+
+```
+
+## **동작 확인**
+
+```swift
+let me: Person = Person()
+let minji: Student = Student()
+yagom.name = "jihoKim"
+minji.name = "hana"
+minji.major = "Swift"
+me.selfIntroduce()
+// 저는 jihoKim입니다
+minji.selfIntroduce()
+// 저는 minji이고, 전공은 Swift입니다
+Person.classMethod()
+// type method - class
+Person.typeMethod()
+// type method - static
+Person.finalCalssMethod()
+// type method - final class
+Student.classMethod()
+// overriden type method - class
+Student.typeMethod()
+// type method - static
+Student.finalCalssMethod()
+// type method - final class
+```
+
+# 잠깐만!!!
+
+## **static 이란 무엇인가?**
+
+- **stati**c은 변수나 메소드에 키워드로 사**용된다.**
+- static 키워드를 사용한 변수는 클래스가 메모리에 올라갈 때 자동으로 생성이 된다. 즉, 인스턴스(객체) 생성 없이 바로 사용가능 하다.
+
+그러므로, 객체를 생성하지 않아도 되니까 편리하고 속도도 빠르다.
+
+**static 키워드를 사용하는 이유는?**
+
+- **자주 변하지 않는 일정한 값이나 설정 정보**같은 공용자원에 대한 접근에 있어서 매번 메모리에 로딩하거나 값을 읽어들이는 것보다 일종의 '전역변수'와 같은 개념을 통해서 접근하는 것이 비용도 줄이고 효율을 높일 수있다.
+- 인스턴스 생성 없이 바로 사용가능 하기 때문에 **프로그램 내에서 공통으로 사용되는 데이터들을 관리 할 때 이용**한다.
