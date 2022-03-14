@@ -179,7 +179,7 @@ var obj : AnyObject = NSString() // 참조형식만 저장 가능
 if let str = data as? String {
     print(str.count)
 }else if let list = data as? [Int] {
-    
+    print("111")
 }
 
 //MARK: -Type Castring Pattern

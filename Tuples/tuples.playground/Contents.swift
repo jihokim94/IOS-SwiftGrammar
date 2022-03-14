@@ -58,6 +58,42 @@ default:
     break
 }
 
+class Person {
+    var name: String = ""
+    func breath() {
+        print("숨을 쉽니다")
+    }
+}
+class Student: Person {
+    var school: String = ""
+    func goToSchool() {
+        print("등교를 합니다")
+    }
+}
+class UniversityStudent: Student {
+    var major: String = ""
+    func goToMT() {
+        print("멤버쉽 트레이닝을 갑니다 신남!")
+        
+    }
+}
+
+var mike: Person = UniversityStudent()
+
+
+var jenny: Person = Student() as Person
+//var jina: UniversityStudent = Person() as UniversityStudent // 컴파일 오류
+// UniversityStudent 인스턴스를 생성하여 Any 행세를 할 수 있도록 업 캐스팅
+var jina: Any = Person() // as Any 생략가능
+
+if let mike = mike as? Student {
+    mike.goToSchool()
+}
+
+if let mike = mike as? UniversityStudent {
+    type(of: mike)
+    mike.goToMT()
+}
 
 
 
