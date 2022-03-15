@@ -2638,3 +2638,166 @@ print(twoDimensionArray)
 
 print(flattened)
 ```
+
+---
+
+## **접근제어란?**
+
+접근제어는 코드끼리 상호작용을 할 때 파일 간 또는 모듈 간에 접근을 제한할 수 있는 기능입니다. 접근제어를 통해 코드의 상세 구현은 숨기고 허용된 기능만 사용하는 인터페이스를 제공 할 수 있습니다.
+
+## **접근제어의 필요성**
+
+객체지향 프로그래밍 패러다임에서 중요한 캡슐화와 은닉화를 구현하는 이유는 외부에서 보거나 접근하면 안 되는 코드가 있기 때문입니다. 불필요한 접근으로 의도치 않은 결과를 초래 하거나 꼭 필요한 부분만 제공해야하는데 전체 코드가 노출될 가능성이 있을 때 접근제어를 이용합니다.
+
+## **모듈**
+
+***모듈(Module)***은 배포할 코드의 묶음 단위입니다. 통상 하나의 프레임워크(Framework)나 라이브러리(Library) 또는 애플리케이션(Application)이 모듈 단위가 될 수 있습니다. 스위프트에서는 `import` 키워드를 사용해 불러옵니다.
+
+## **소스파일**
+
+***소스파일***은 하나의 스위프트 소스 코드 파일을 의미합니다. 자바나 Objective-C와 같은 기존 의 프로그래밍 언어에서는 통상 파일 하나에 타입을 하나만 정의합니다. 스위프트에서도 보통 파일 하나에 타입 하나만 정의하지만, 때로는 소스파일 하나에 여러 타입(여러 개의 클래스나 구조체, 열거형 등)이나 함수 등 많은 것을 정의하거나 구현할 수도 있습니다.
+
+### 1. public - 공개 접근수준
+
+- **어디에서든 접근 가능**
+- 주로 프레임워크에서 외부와 연결될 인터페이스를 구현하는데 많이 쓰임
+
+### 2. open - 개방 접근수준
+
+- **public보다 높은 접근수준**
+- **클래스, 클래스 멤버에서만 사용 가능**
+- public과의 차이점
+    1. 클래스가 정의된 **모듈 밖에서도 상속** 가능
+    2. 해당 멤버가 정의된 모듈 밖의 **다른 모듈에서도 재정의** 가능
+- **즉 다른 모듈에서도 부모 클래스로 사용**하겠다는 목적
+
+### 3. internal (default) - 내부 접근수준
+
+- 기본적으로 모든 요소에 **암묵적으로 지정되는 기본(default) 접근수준**
+- **소스파일이 속해있는 모듈** 어디에서든 접근 가능
+- 외부 모듈 접근 x
+- 모듈 내부에서 광역적으로 사용되는 경우
+
+### 4. fileprivate - 파일외부비공개 접근수준
+
+- **해당 요소가 구현된 소스파일 내부에서만 사용** 가능
+- 해당 소스파일 외부에서 값이 변경 혹은 함수를 호출할 경우 부작용이 예상될 때 사용
+
+### 5. private - 비공개 접근수준
+
+- 가장 좁은 접근 범위 가짐
+- **해당 요소를 정의하고 구현한 범위 내**에서만 사용 가능
+- **같은 소스파일 안에 구현한 다른 타입이나 기능에서도 사용 불가능**
+
+### 주의 사항 및 예제.. 현업에서는 어떻게 할지~ 모르것지만 일단은 공부
+
+모든 타입에 적용되는 접근수준의 규칙은 ‘**상위 요소보다 하위 요소가 더 높은 접근수준을 가 질 수 없다**’입니다.
+
+비공개 접근수준으로 정의한 구조체 내부 의 프로퍼티로 내부수준이나 공개수준을 갖는 프로퍼티를 정의할 수 없습니다. 또, 함수의 매 개변수로 특정 접근수준이 부여된 타입이 전달되거나 반환된다면, 그 타입의 접근수준보다 함 수의 접근수준이 높게 설정될 수 없습니다. 아래코드를 통해 잘못된 접근수준의 예를 살펴 봅시다.
+
+> 잘못된 접근수준 부여
+> 
+
+```swift
+private class AClass {
+    // 공개 접근수준을 부여해도 AClass의 접근수준이 비공개 접근수준이므로
+    // 이 메서드의 접근수준도 비공개 접근수준으로 취급됩니다.
+    public func someMethod() {
+        // ...
+    }
+}
+// AClass의 접근수준이 비공개 접근수준이므로
+// 공개 접근수준 함수의 매개변수나 반환 값 타입으로 사용할 수 없습니다.
+public func someFunction(a: AClass) -> AClass {
+    // 오류 발생!
+    return a
+}
+```
+
+같은 파일 내부에서 private 접근수준과 `fileprivate` 접근수준은 사용할 때 분명한 차이가 있습니다. `fileprivate` 접근수준으로 지정한 요소는 같은 파일 어떤 코드에서도 접근할 수 있습니다.반면에 `private` 접근수준으로 지정한 요소는 같은 파일 내부에 다른 타입의 코드가 있더라도 접근이 불가능합니다. 그러나 자신을 확장하는 익스텐션(`extension`) 코드가 같은 파일에 존재하는 경우에는 접근할 수 있습니다.
+
+```swift
+ public struct SomeType {
+       private var privateVariable = 0
+       fileprivate var fileprivateVariable = 0
+}
+// 같은 타입의 익스텐션에서는 private 요소에 접근 가능
+extension SomeType {
+    public func publicMethod() {
+        print("\(self.privateVariable), \(self.fileprivateVariable)")
+    }
+    private func privateMethod() {
+        print("\(self.privateVariable), \(self.fileprivateVariable)")
+    }
+    fileprivate func fileprivateMethod() {
+        print("\(self.privateVariable), \(self.fileprivateVariable)")
+    }
+}
+struct AnotherType {
+    var someInstance: SomeType = SomeType()
+    mutating func someMethod() {
+        // public 접근수준에는 어디서든 접근 가능
+        self.someInstance.publicMethod() // 0, 0
+        // 같은 파일에 속해 있는 코드이므로 fileprivate 접근수준 요소에 접근 가능
+        self.someInstance.fileprivateVariable = 100
+        self.someInstance.fileprivateMethod() // 0, 100
+        // 다른 타입 내부의 코드이므로 private 요소에 접근 불가! 오류!
+        // self.someInstance.privateVariable = 100
+        // self.someInstance.privateMethod()
+    }
+}
+```
+
+구조체 또는 클래스를 사용하여 저장 프로퍼티를 구현할 때는 허용된 접근수준에서 프로퍼티 값을 가져갈 수 있습니다. 그러면 값을 변경할 수 없도록 구현하고 싶다면 어떻게 해야 할까????!!
+
+그럴 때는 설정자(Setter)만 더 낮은 접근수준을 갖도록 제한할 수 있습니다. 요소의 접근수준 키워드 뒤에 `{접근수준}(set)`처럼 표현하면 설정자의 접근수준만 더 낮도록 지정해줄 수 있습니다.설정자 접근수준 제한은 프로퍼티, 서브스크립트, 변수 등에 적용될 수 있으며, 해당 요소의 접근수준보다 같거나 낮은 수준으로 제한해주어야 합니다.
+```swift
+public struct SomeType {
+    // 비공개 접근수준 저장 프로퍼티 count
+    fileprivate var count1: Int = 0
+    private var count2: Int = 0
+    // 공개 접근수준 저장 프로퍼티 publicStoredProperty
+    public var publicStoredProperty: Int = 0
+    // 공개 접근수준 저장 프로퍼티 publicGetOnlyStoredProperty
+    // 설정자는 비공개 접근수준
+    public private(set) var publicGetOnlyStoredProperty: Int = 0
+    // 내부 접근수준 연산 프로퍼티 internalComputedProperty
+    internal var internalComputedProperty: Int {
+        get {
+            return count2
+        }
+        set {
+            count2 += 1
+        }
+    }
+    // 내부 접근수준 저장 프로퍼티 internalGetOnlyComputedProperty
+    // 설정자는 비공개 접근수준
+    internal private(set) var internalGetOnlyComputedProperty: Int {
+        get {
+            return count2
+        }
+        set {
+            count2 += 1
+        }
+    }
+}
+
+var someInstance: SomeType = SomeType()
+//같은 파일내부에서만 접근 가능
+print(someInstance.count1)
+//외부에서 접근 불가
+//print(someInstance.count2)
+
+// 외부에서 접근자, 설정자 모두 사용 가능
+print(someInstance.publicStoredProperty)    // 0
+someInstance.publicStoredProperty = 100
+// 외부에서 접근자만 사용 가능
+print(someInstance.publicGetOnlyStoredProperty) // 0
+//someInstance.publicGetOnlyStoredProperty = 100    // 오류 발생
+// 외부에서 접근자, 설정자 모두 사용 가능
+print(someInstance.internalComputedProperty)    // 0
+someInstance.internalComputedProperty = 100
+// 외부에서 접근자만 사용 가능
+print(someInstance.internalGetOnlyComputedProperty)     // 1
+//someInstance.internalGetOnlyComputedProperty = 100    // 오류 발생
+```
