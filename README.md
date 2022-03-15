@@ -2589,3 +2589,52 @@ print(sumFromThree) // 28
 ---
 
 `reduce` 메서드에 전달하는 클로저의 매개변수 이름을 `first`, `second` 보다는 `result`, `currentItem`과 같은 이름으로 정정하는 것이 좋겠습니다. 첫 번째 매개변수는 초깃값으로부터 출발하여 마지막 요소까지 순회하는 내내의 결괏값입니다. `currentItem`은 현재 순회하고 있는 요소의 값을 뜻합니다. 결국 `return result + currentItem`이라고 표현한다면 이제까지 더해진 결괏값에 이번 요소의 값을 더한다는 뜻이 되겠습니다.
+
+### **정리 간단하게 해보겠다!!**
+
+고차함수는 다른 함수를 전달인자로 받거나 함수실행의 결과를 함수로 반환하는 함수’ 
+
+전달이자로 일급객체인 클로져를 사용한다.@!@!@!@!@
+
+간단하구만....!!!
+
+Map은 기본 컨테이너 내부의 데이터를 변형 하면 새로운 컨테이너를 리턴해준다.
+
+Filter는  함수는 컨테이너 내부의 **값 조건에 맞는 값들로  걸러서 새로운 컨테이너로 추출**합니다.
+
+reduce는 초깃값을 기점으로 출발하여 매요소 까지 순회하여 결괏값을 리턴해준다.
+
+compactMap , flatMap 공부해야함
+
+## **compactMap**
+
+/// 1차원 배열에서 nil을 제거하고 옵셔널 바인딩을 할 때
+
+```swift
+func compactMap<ElementOfResult>(_ transform: (Int?) throws -> ElementOfResult?) rethrows -> [ElementOfResult]
+
+let optionalArray: [Int?] = [1, 2, nil, 3, 4, nil, 5, 6]
+let compacted = optionalArray.compactMap { $0 }
+
+print(optionalArray)
+
+print(compacted)
+```
+
+## flatMap
+
+2차원 배열을 1차원 배열로 flatten하게 만들 때
+
+구현체
+
+```swift
+func flatMap<SegmentOfResult>(_ transform: ([Int]) throws -> SegmentOfResult) rethrows -> [SegmentOfResult.Element] where SegmentOfResult : Sequence
+
+let twoDimensionArray: [[Int]] = [[1, 2, 3], [4, 5, 6]]
+
+let flattened = twoDimensionArray.flatMap{ $0 }
+
+print(twoDimensionArray)
+
+print(flattened)
+```
