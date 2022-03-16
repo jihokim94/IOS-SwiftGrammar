@@ -2801,3 +2801,208 @@ someInstance.internalComputedProperty = 100
 print(someInstance.internalGetOnlyComputedProperty)     // 1
 //someInstance.internalGetOnlyComputedProperty = 100    // 오류 발생
 ```
+
+---
+
+
+## 프로토콜 지향 언어 POP
+
+## **프로토콜 초기구현**
+
+익스텐션은 기존 타입의 기능을 확장하며, 프로토콜은 프로토콜을 채택한 타입이 원하는 기능을 강제로 구현한다는 점을 우리는 알고 있습니다. 그런데 특정 프로토콜을 정의하고 여러 타입에서 이 프로토콜을 준수하게 만들어 타입마다 똑같은 메서드, 프로퍼티, 서브스크립트 등을 구현해야 한다면…? 얼마나 많은 코드를 중복 사용해야 하며, 유지보수는 얼마나 힘들어질지 생각만 해도 머리가 아플 겁니다. 이때 필요한 게 바로 익스텐션과 프로토콜의 결합입니다.
+
+아래 코드를 통해서 무언가를 보낼 수 있고(`Sendable`) 받을 수 있는(`Receiveable`) 프로토콜을 정의하고, 그 프로토콜에 `extension`을 통해 기능을 구현해보았습니다.
+
+> 익스텐션을 통한 프로토콜의 실제 구현
+> 
+
+```swift
+// 무언가를 수신할 수 있는 기능
+protocol Receiveable {
+    func received(data: Any, from: Sendable)
+}
+
+extension Receiveable {
+    // 메시지를 수신합니다.
+    func received(data: Any, from: Sendable) {
+        print("\(self) received \(data) from \(from)")
+    }
+}
+
+// 무언가를 발신할 수 있는 기능
+protocol Sendable {
+    var from: Sendable { get }
+    var to: Receiveable? { get }
+    func send(data: Any)static func isSendableInstance(_ instance: Any) -> Bool
+}
+
+extension Sendable {
+    // 발신은 발신 가능한 객체, 즉 Sendable 프로토콜을 준수하는 타입의 인스턴스여야 합니다.
+    var from: Sendable {
+        return self
+    }
+
+    // 메시지를 발신합니다.
+    func send(data: Any) {
+        guard let receiver: Receiveable = self.to else {
+            print("Message has no receiver")
+            return
+        }
+
+        // 수신 가능한 인스턴스의 received 메서드를 호출합니다.
+        receiver.received(data: data, from: self.from)
+    }
+
+    static func isSendableInstance(_ instance: Any) -> Bool {
+        if let sendableInstance: Sendable = instance as? Sendable {
+            return sendableInstance.to != nil
+        }
+        return false
+    }
+}
+
+// 수신, 발신이 가능한 Message 클래스
+class Message: Sendable, Receiveable {
+    var to: Receiveable?
+}
+
+// 수신, 발신이 가능한 Mail 클래스
+class Mail: Sendable, Receiveable {
+    var to: Receiveable?
+}
+
+// 두 Message 인스턴스를 생성합니다.
+let myPhoneMessage: Message = Message()
+let yourPhoneMesssage: Message = Message()
+
+// 아직 수신받을 인스턴스가 없습니다.
+myPhoneMessage.send(data: "Hello") // Message has no receiver
+
+// Message 인스턴스는 발신과 수신이 모두 가능하므로 메시지를 주고 받을 수 있습니다.
+myPhoneMessage.to = yourPhoneMesssage
+myPhoneMessage.send(data: "Hello") // Message received Hello from Message
+
+// Mail 인스턴스를 두 개 생성합니다.
+let myMail: Mail = Mail()
+let yourMail: Mail = Mail()
+
+myMail.send(data: "Hi") // Mail has no receiver
+
+// Message와 Mail 모두 Sendable과 Receiveable 프로토콜을 준수하므로
+// 서로 주고 받을 수 있습니다.
+myMail.to = yourMail
+myMail.send(data: "Hi") // Mail received Hi from Mail
+
+myMail.to = myPhoneMessage
+myMail.send(data: "Bye") // Message received Bye from Mail
+
+// String은 Sendable 프로토콜을 준수하지 않습니다.
+Message.isSendableInstance("Hello") // false
+
+// Message와 Mail은 Sendable 프로토콜을 준수합니다.
+Message.isSendableInstance(myPhoneMessage) // true
+
+// yourPhoneMessage는 to 프로퍼티가 설정되지 않아서 보낼 수 없는 상태입니다.
+Message.isSendableInstance(yourPhoneMesssage) // false
+Mail.isSendableInstance(myPhoneMessage) // true
+Mail.isSendableInstance(myMail) // true
+
+```
+
+`Message`와 `Mail` 클래스는 `Receiveable`과 `Sendable` 프로토콜을 채택하고 있지만, 실제로 구현한 것은 저장 인스턴스 프로퍼티인 `to` 뿐입니다. 그 외의 기능은 이미 각 프로토콜의 익스텐션에 구현되어 있습니다.
+
+프로토콜을 정의할 때는 그 프로토콜을 채택한 타입에서 구현해주어야 하는 프로토콜의 요구 사항을 구현할 수 없습니다. 단지 요구사항을 정의만 할 수 있을 뿐입니다.그러나 프로토콜의 익스텐션에는 프로토콜이 요구하는 기능을 실제로 구현해줄 수 있습니다. 다만 익스텐션에는 저장 프로퍼티를 구현할 수 없으므로 저장 프로퍼티는 각각의 타입에서 직접 구현해야 합니다. 이렇게 프로토콜과 익스텐션을 결합하면 코드의 재사용성이 월등히 증가합니다.
+
+이처럼 프로토콜의 요구사항을 익스텐션을 통해 구현하는 것을 ***프로토콜 초기구현(Protocol Default Implementations)***이라고 합니다.
+
+그런데 만약 프로토콜의 익스텐션에서 구현한 기능을 사용하지 않고 타입의 특성에 따라 조금 변경해서 구현하고 싶다면 재정의하면 됩니다.
+
+```swift
+class Mail: Sendable, Receiveable {
+    var to: Receiveable?
+    func send(data: Any) {
+        print("Mail의 send 메서드는 재정의되었습니다.")
+    }
+}
+
+let mailInstance: Mail = Mail()
+mailInstance.send(data: "Hello") // Mail의 send 메서드는 재정의되었습니다.
+```
+
+사실 위 코드의 `send(data:)` 메서드를 구현한 것은 재정의라고 할 수 없습니다. 이미 프로토콜을 준수하는 타입의 메서드를 호출했기 때문입니다. 특정 프로토콜을 준수하는 타입에 프로토콜의 요구사항을 찾아보고 이미 구현되어 있다면 그 기능을 호출하고, 그렇지 않다면 프로토콜 초기구현의 기능을 호출합니다.
+
+이처럼 프로토콜 초기구현을 통해 기능을 구현한다면 프로토콜 채택만으로 타입에 기능을 추가해 사용할 수 있습니다. 이것이 프로토콜 지향 프로그래밍(Protocol Oriented Programming, P.O.P.)의 핵심 콘셉트 중 하나입니다.
+
+프로토콜 지향 프로그래밍의 서두에서도 언급했지만 실제로 스위프트의 많은 기능은 프로토콜, 익스텐션, 제네릭의 조합으로 구현되어 있습니다.
+
+> 스위프트 표준 라이브러리의 Array 정의
+> 
+
+```swift
+public struct Array : RandomAccessCollection, MutableCollection {
+    public typealias Index = Int
+    public typealias Iterator = IndexingIterator<[Element]>
+
+    public var startIndex: Int { get }
+    public var endIndex: Int { get }
+
+    public func index(after i: Int) -> Int
+    public func formIndex(after i: inout Int)public func index(before i: Int) -> Int
+    public func formIndex(before i: inout Int)public func index(_ i: Int, offsetBy n: Int) -> Int
+    public func index(_ i: Int, offsetBy n: Int, limitedBy limit: Int) -> Int?
+
+    public func distance(from start: Int, to end: Int) -> Int
+    public typealias Indices = CountableRange
+
+    public subscript(index: Int) -> Element
+    public subscript(bounds: Range) -> ArraySlicepublic func withUnsafeBufferPointer(_ body: (UnsafeBufferPointer) throws -> R) rethrows -> R
+    public mutating func withUnsafeMutableBufferPointer(_ body: (inout UnsafeMutableBufferPointer) throws -> R) rethrows -> R
+    public mutating func replaceSubrange(_ subrange: Range, with newElements: C)public mutating func popLast() -> Element?
+    public func dropLast(_ n: Int) -> ArraySlicepublic func suffix(_ maxLength: Int) -> ArraySlicepublic func map(_ transform: (Element) throws -> T) rethrows -> [T]
+    public func dropFirst(_ n: Int) -> ArraySlicepublic func prefix(_ maxLength: Int) -> ArraySlice// 중략..
+    public func reversed() -> ReversedRandomAccessCollection>
+    // 생략..
+```
+
+익스텐션을 통한 각 프로토콜의 초기구현은 구현코드를 볼 수 없기 때문에 어떻게 구현했는지는 확실히 볼 수 없지만 `Array`의 정의만 보더라도 제네릭, 프로토콜을 다양하게 사용한 것을 볼 수 있습니다. 아마도 각 타입별로 공유하는 초기구현은 익스텐션으로 구현했을 것입니다.
+
+스위프트의 주요 기능을 하나하나 알아갈수록 표준 라이브러리의 코드가 눈에 잘 들어오나요? 하나의 기능을 알아갈 때마다 스위프트 표준 라이브러리를 살펴보면서 어떤 기능을 통해 구현 했는지, 어떻게 연관이 되는지 읽어보고, 해석해보고, 상상해보는 것도 언어를 이해하는 데 도움이 됩니다.
+
+## **기본 타입 확장**
+
+프로토콜 초기구현을 통해 스위프트의 기본 타입을 확장하여 내가 원하는 기능을 공통적으로 추가해볼 수도 있습니다. 스위프트 표준 라이브러리에 정의되어 있는 타입은 실제 구현코드를 보고 수정할 수 없기 때문에 익스텐션, 프로토콜, 프로토콜의 초기구현을 사용해 기본 타입에 기능을 추가해볼 수 있습니다.
+
+> SelfPrintable 프로토콜의 초기구현과 기본타입의 확장
+> 
+
+```swift
+protocol SelfPrintable {
+    func printSelf()
+}
+
+extension SelfPrintable {
+    func printSelf() {
+        print(self)
+    }
+}
+
+extension Int: SelfPrintable { }
+extension String: SelfPrintable { }
+extension Double: SelfPrintable { }
+
+1024.printSelf() // 1024
+3.14.printSelf() // 3.14
+"hana".printSelf() // "hana"
+```
+
+위 코드는 코드를 수정할 수 없는 스위프트의 기본 타입인 `Int`, `String`, `Double`에 `SelfPrintable` 프로토콜과 그 프로토콜의 초기구현으로 공통 기능을 간단히 추가해본 것입니다. 스위프트 표준 라이브러리 내부의 공통 기능이 이렇게 프로토콜 초기구현을 통해 구현하지 않았을까 상상해볼 수 있겠죠.
+
+## 정리 !!!
+
+스위프트의 프로토콜 지향 프로그래밍(Protocol Oriented Programming)은 **`protocol`**
+
+의 기능을 `extension` 에 구현한 **프로토콜 초기구현(Protocol Default Implementation)**이 핵심입니다. 
+
+프로토콜 초기구현을 통해 프로토콜의 기능을 미리 구현해두면 프로토콜을 기능의 블럭처럼 가져다 쓸 수 있습니다.
+
+위에예시를 보면서 이해해보자 지호야~
