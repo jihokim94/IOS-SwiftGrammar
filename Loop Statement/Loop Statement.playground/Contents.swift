@@ -60,3 +60,8 @@ repeat {
     num1 += 1
 }while num1 < 100
 num1 // 자바의 do - while 같은 형태네요~ 일단 repeat의 statement는 실행하고 후행 반복 조건식이 트루면 다시 반복
+
+
+
+
+

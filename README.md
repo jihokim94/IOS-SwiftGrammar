@@ -1,4 +1,4 @@
-# IOS-SwiftGrammar
+o# IOS-SwiftGrammar
 
 
 Lower Camel Case : function , method , variable , contant
@@ -117,21 +117,21 @@ print(someCharacter)
 문자열 타입. 유니코드 사용. 큰따옴표(“”) 사용.
 
 ```
-var someString: String = "하하하 ? "
+var someString: String = "하하하 ? " 
 someString = someString + "웃으면 복이와요"
 print(someString)
-"하하하 ? 웃으면 복이 와요"
+"하하하 ? 웃으면 복이 와요" 
 ```
 
 여러줄 문자열은 큰따옴표 세 개 사용.
 
 ```
-someString = """
-여러줄 문자열을
+someString = """ <- 줄바꿈(enter) 큰따음표 사이에 위치해야해~~~
+여러줄 문자열을 
 사용할 수 있습니다.
 첫 줄에 겹따옴표 세 개,
 마지막 줄에 겹따옴표 세 개를
-사용하면 됩니다.
+사용하면 됩니다. <- 줄바꿈(enter)
 """
 
 // p.s.!!!!! 
@@ -836,6 +836,8 @@ class 이름 {
 ### **프로퍼티 및 메서드 구현**
 
 클래스의 타입 메서드는 두 종류가 있습니다. 상속 후 재정의가 가능한 class 타입메서드, 상속 후 재정의가 불가능한 static 타입메서드가 있습니다. 자세한 내용은 상속 부분에서 다시 다룹니다.
+
+class , static 둘다 타입 메소드로 메모리에 할당하지않아도 정적 메소드로 사용가능 하다 그리고 차이점으로는 class는 상속시 재정의가능(오버라이드) , static은 당연 불가
 
 ```swift
 class Sample {
@@ -1906,7 +1908,9 @@ print(guardJob) // 슈퍼맨
 ```swift
 var someInt: Int = 0
 // 검증 조건에 부합하므로 지나갑니다
-assert(someInt == 0, "someInt != 0")
+// 첫번쨰는 조건 파라미터 두번째 파라미터는 첫번째 조건이 부합하지 않을시 메시지
+assert(someInt == 0, "someInt != 0") 
+
 someInt = 1
 //assert(someInt == 0) // 동작 중지, 검증 실패
 //assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
@@ -1951,6 +1955,7 @@ while true {
 // 1
 // 2
 func someFunction(info: [String: Any]) {
+// dictionary는 키의 옵셔널 가능성이 있기에 옵셔널 바인딩과 타입 캐스팅을 통해 밸류를 추출해보자~
     guard let name = info["name"] as? String else {
         return
     }
@@ -2216,6 +2221,7 @@ print(result) // 25
 > reduce 메서드 사용
 > 
 
+
 ```swift
 // 초깃값이 0이고 someNumbers 내부의 모든 값을 더합니다.
 let sum: Int = someNumbers.reduce(0, { (first: Int, second: Int) -> Int in
@@ -2395,6 +2401,7 @@ do {
 
 ### **`try?` 와 `try!`**
 
+try? 는 오류 발생시 nil  , try! 는 런타임 오류~
 ### **`try?`**
 
 별도의 오류처리 결과를 통보받지 않고 오류가 발생했으면 결과값을 `nil`로 돌려받을 수 있습니다. 정상동작 후에는 옵셔널 타입으로 정상 반환값을 돌려 받습니다.
