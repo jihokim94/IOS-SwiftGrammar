@@ -1,4 +1,4 @@
-o# IOS-SwiftGrammar
+# IOS-SwiftGrammar
 
 
 Lower Camel Case : function , method , variable , contant
@@ -2641,9 +2641,9 @@ let twoDimensionArray: [[Int]] = [[1, 2, 3], [4, 5, 6]]
 
 let flattened = twoDimensionArray.flatMap{ $0 }
 
-print(twoDimensionArray)
+print(twoDimensionArray) // [[1,2,3],[4,5,6]]
 
-print(flattened)
+print(flattened) / [ 1, ,2, 3, 4,5 ,6]
 ```
 
 ---
